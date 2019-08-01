@@ -1,128 +1,55 @@
+function() {
+  var canvas = document.getElementById('canvas');
+  console.log(canvas);
+  
+	var context = canvas.getContext("2d");
+	canvas.width = 280;
+	canvas.height = 280;
 
-    var canvas, ctx, flag = false,
-        prevX = 0,
-        currX = 0,
-        prevY = 0,
-        currY = 0,
-        dot_flag = false;
+	var Mouse = {x:0, y:0};
+	var lastMouse = {x:0, y:0};
+	context.fillStyle = "white";
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	context.color = "black";
+	context.lineWidth = 7;
+    context.lineJoin = context.lineCap = 'round';
+	
+	debug();
 
-    var x = "black",
-        y = 2;
-    
-    function init() {
-        canvas = document.getElementById('can');
-        ctx = canvas.getContext("2d");
-        w = canvas.width;
-        h = canvas.height;
-    
-        canvas.addEventListener("mousemove", function (e) {
-            findxy('move', e)
-        }, false);
-        canvas.addEventListener("mousedown", function (e) {
-            findxy('down', e)
-        }, false);
-        canvas.addEventListener("mouseup", function (e) {
-            findxy('up', e)
-        }, false);
-        canvas.addEventListener("mouseout", function (e) {
-            findxy('out', e)
-        }, false);
-    }
-    
-    function color(obj) {
-        switch (obj.id) {
-            case "green":
-                x = "green";
-                break;
-            case "blue":
-                x = "blue";
-                break;
-            case "red":
-                x = "red";
-                break;
-            case "yellow":
-                x = "yellow";
-                break;
-            case "orange":
-                x = "orange";
-                break;
-            case "black":
-                x = "black";
-                break;
-            case "white":
-                x = "white";
-                break;
-        }
-        if (x == "white") y = 14;
-        else y = 2;
-    
-    }
-    
-    function draw() {
-        ctx.beginPath();
-        ctx.moveTo(prevX, prevY);
-        ctx.lineTo(currX, currY);
-        ctx.strokeStyle = x;
-        ctx.lineWidth = y;
-        ctx.stroke();
-        ctx.closePath();
-    }
-    
-    function erase() {
-        var m = confirm("Want to clear");
-        if (m) {
-            ctx.clearRect(0, 0, w, h);
-            document.getElementById("canvasimg").style.display = "none";
-        }
-    }
-    
-    function save() {
-        document.getElementById("canvasimg").style.border = "2px solid";
-        var dataURL = canvas.toDataURL();
-        console.log(dataURL);
-        document.getElementById('inp_img').value = canvas.toDataURL('image/png');
-        var Pic = dataURL.replace(/^data:image\/(png|jpg);base64,/, "")
-        $.ajax({
-            type: 'POST',
-            url: '/image',
-            data: '{ "imageData" : "' + Pic + '" }',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function (msg) {
-                alert("Done, Picture Uploaded.");
-            }
-        });
-        document.getElementById("canvasimg").src = dataURL;
-        document.getElementById("canvasimg").style.display = "inline";
-    }
-    
-    function findxy(res, e) {
-        if (res == 'down') {
-            prevX = currX;
-            prevY = currY;
-            currX = e.clientX - canvas.offsetLeft;
-            currY = e.clientY - canvas.offsetTop;
-    
-            flag = true;
-            dot_flag = true;
-            if (dot_flag) {
-                ctx.beginPath();
-                ctx.fillStyle = x;
-                ctx.fillRect(currX, currY, 2, 2);
-                ctx.closePath();
-                dot_flag = false;
-            }
-        }
-        if (res == 'up' || res == "out") {
-            flag = false;
-        }
-        if (res == 'move') {
-            if (flag) {
-                prevX = currX;
-                prevY = currY;
-                currX = e.clientX - canvas.offsetLeft;
-                currY = e.clientY - canvas.offsetTop;
-                draw();
-            }
-        }
-    }
+	canvas.addEventListener("mousemove", function(e) {
+		lastMouse.x = Mouse.x;
+		lastMouse.y = Mouse.y;
+
+		Mouse.x = e.pageX - this.offsetLeft-15;
+		Mouse.y = e.pageY - this.offsetTop-15;
+	}, false);
+
+	canvas.addEventListener("mousedown", function(e) {
+		canvas.addEventListener("mousemove", onPaint, false);
+	}, false);
+
+	canvas.addEventListener("mouseup", function() {
+		canvas.removeEventListener("mousemove", onPaint, false);
+	}, false);
+
+	var onPaint = function() {	
+		context.lineWidth = context.lineWidth;
+		context.lineJoin = "round";
+		context.lineCap = "round";
+		context.strokeStyle = context.color;
+	
+		context.beginPath();
+		context.moveTo(lastMouse.x, lastMouse.y);
+		context.lineTo(Mouse.x,Mouse.y );
+		context.closePath();
+		context.stroke();
+	};
+
+	function debug() {
+		$("#clearButton").on("click", function() {
+			context.clearRect( 0, 0, 280, 280 );
+			context.fillStyle="white";
+			context.fillRect(0,0,canvas.width,canvas.height);
+		});
+	}
+}();
