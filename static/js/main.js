@@ -1,4 +1,4 @@
-function() {
+function init() {
   var canvas = document.getElementById('canvas');
   console.log(canvas);
   
@@ -19,9 +19,25 @@ function() {
 	canvas.addEventListener("mousemove", function(e) {
 		lastMouse.x = Mouse.x;
 		lastMouse.y = Mouse.y;
-
-		Mouse.x = e.pageX - this.offsetLeft-15;
-		Mouse.y = e.pageY - this.offsetTop-15;
+		console.log("offset");
+		
+		console.log(this.offsetLeft);
+		console.log(this.offsetTop);
+		console.log("pagex");
+		
+		console.log(e.pageX);
+		console.log(e.pageY);
+		console.log("mouse");
+		
+		console.log(Mouse.x);
+		console.log(Mouse.y);
+		
+		
+		
+		
+		
+		Mouse.x = e.pageX - this.offsetLeft;
+		Mouse.y = e.pageY - this.offsetTop;
 	}, false);
 
 	canvas.addEventListener("mousedown", function(e) {
@@ -52,4 +68,6 @@ function() {
 			context.fillRect(0,0,canvas.width,canvas.height);
 		});
 	}
-}();
+}
+
+init();
