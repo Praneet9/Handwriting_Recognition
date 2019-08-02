@@ -19,18 +19,18 @@ function init() {
 	canvas.addEventListener("mousemove", function(e) {
 		lastMouse.x = Mouse.x;
 		lastMouse.y = Mouse.y;
-		console.log("offset");
+		// console.log("offset");
 		
-		console.log(this.offsetLeft);
-		console.log(this.offsetTop);
-		console.log("pagex");
+		// console.log(this.offsetLeft);
+		// console.log(this.offsetTop);
+		// console.log("pagex");
 		
-		console.log(e.pageX);
-		console.log(e.pageY);
-		console.log("mouse");
+		// console.log(e.pageX);
+		// console.log(e.pageY);
+		// console.log("mouse");
 		
-		console.log(Mouse.x);
-		console.log(Mouse.y);
+		// console.log(Mouse.x);
+		// console.log(Mouse.y);
 		
 		
 		
@@ -71,3 +71,19 @@ function init() {
 }
 
 init();
+
+$(".myButton").click(function(){
+	$('#result').text('  Predicting...');
+	var canvasObj = document.getElementById("canvas");
+	var img = canvasObj.toDataURL('image/png');
+	// console.log(img);
+	
+	$.ajax({
+		type: "POST",
+		url: "/predict",
+		data: img,
+		success: function(data){
+			$('#result').text('Predicted Output: ' + data);
+		}
+	});
+});
